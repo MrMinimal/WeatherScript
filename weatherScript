@@ -1,0 +1,5 @@
+#/bin/bash
+#
+# Authors:		Tom Langwaldt, David Becker
+# Purpose:		This script obtains wather data via the weather.com API
+# 
