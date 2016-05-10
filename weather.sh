@@ -5,6 +5,7 @@
 # TODO: -c --current
 # TODO: -p --predicted
 # TODO: --no-intro option
+# TODO: --dialog
 
 # Die app id die von der API gefordert wird
 APPID=31c8db3e5477aeac1def817cc0bc66b3
@@ -19,11 +20,8 @@ sleep 1
 # API Anfrage
 RESPONSE=$(curl -s "api.openweathermap.org/data/2.5/weather?q="$CITY"&units=metric&APPID="$APPID"")
 
-#(?<="temp":)\d+.\d(?=,)
-#grep -o -P '(?<="temp":)\d+.\d+(?=,)')
+# Einlesen der interessanten Daten in Variablen
 TEMPERATURE=$(sed -n 's/\(.*\)\("temp":\)\(-*[0-9]\+\.[0-9]\+\)\(.*\)/\3/p' <<< $RESPONSE)
+WINDDIR=$(sed -n 's/\(.*\)\("deg":\)\(-*[0-9]\+\.[0-9]\+\)\(.*\)/\3/p' <<< $RESPONSE)
 
-
-
-echo "full:"$RESPONSE
-echo "temp:"$TEMPERATURE
+echo $WINDDIR " degrees"
