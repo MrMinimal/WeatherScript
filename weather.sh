@@ -21,7 +21,7 @@ RESPONSE=$(curl -s "api.openweathermap.org/data/2.5/weather?q="$CITY"&units=metr
 
 #(?<="temp":)\d+.\d(?=,)
 #grep -o -P '(?<="temp":)\d+.\d+(?=,)')
-TEMPERATURE=$(sed -n 's/\(.*\)\("temp":\)\([0-9][0-9]\.[0-9]\)\(.*\)/\3/p' <<< $RESPONSE)
+TEMPERATURE=$(sed -n 's/\(.*\)\("temp":\)\([0-9]\+\.[0-9]\+\)\(.*\)/\3/p' <<< $RESPONSE)
 
 echo "full:"$RESPONSE
 echo "temp:"$TEMPERATURE
