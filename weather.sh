@@ -11,7 +11,7 @@
 APPID=31c8db3e5477aeac1def817cc0bc66b3
 
 # TODO: dynamisch einlesen
-CITY=berlin
+CITY=friedrichshafen
 
 # Intro
 dialog 	--title "WetterScript" --infobox "von Tom Langwaldt und David Becker" 3 40
@@ -23,5 +23,9 @@ RESPONSE=$(curl -s "api.openweathermap.org/data/2.5/weather?q="$CITY"&units=metr
 # Einlesen der interessanten Daten in Variablen
 TEMPERATURE=$(sed -n 's/\(.*\)\("temp":\)\(-*[0-9]\+\.[0-9]\+\)\(.*\)/\3/p' <<< $RESPONSE)
 WINDDIR=$(sed -n 's/\(.*\)\("deg":\)\(-*[0-9]\+\.[0-9]\+\)\(.*\)/\3/p' <<< $RESPONSE)
+WINDSPEED=$(sed -n 's/\(.*\)\("speed":\)\(-*[0-9]\+\.[0-9]\+\)\(.*\)/\3/p' <<< $RESPONSE)
 
+echo "full:"$RESPONSE
+echo "temp:"$TEMPERATURE
+echo "wind speed:"$WINDSPEED
 echo $WINDDIR " degrees"
