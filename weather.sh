@@ -19,16 +19,16 @@
 
 # ========================================= VARIABLES =========================================
 
-	APPID=31c8db3e5477aeac1def817cc0bc66b3		# Die app id für die API
-	PRINTHELP=0									# Soll Hilfe ausgegeben werden?
-	CITY=										# Wetter für welche Stadt
+	appid=31c8db3e5477aeac1def817cc0bc66b3		# Die app id für die API
+	printhelp=0									# Soll Hilfe ausgegeben werden?
+	city=										# Wetter für welche Stadt
 
 # ========================================= FUNCTIONS =========================================
 
 	# Wird einmalig am Ende des Scripts aufgerufen um ggf. über die Verwendung zu informieren
 	usageHint()
 	{
-		if [ $PRINTHELP -eq 1 ]
+		if [ $printhelp -eq 1 ]
 		then
 			echo "Verwendung: $0 [Stadtname, PLZ] TODO: ADD FURTHER ARGUMENTS"
 		fi
@@ -46,23 +46,24 @@
 	# Sanity check ob überhaupt Argumente übergeben wurden
 	if [ $# -eq 0 ]
 	then
-		PRINTHELP=1
+		printhelp=1
 		exit 1
 	fi
 
 	# Versuch den Stadtname einer Variablen zuzuweisen
-	CITY=$1
+	city=$1
 
 	# Sanity check ob der Stadtname eingegeben wurde
-	if [ -z $CITY]
+	if [ -z $city]
 	then
 	    echo "Kein Stadtname eingelesen!"
-	    PRINTHELP=1
+	    printhelp=1
 	    exit 1
 	fi
 
+	# Iterieren über die Eingabeargumente
 	while getopts ":h:c:p:" opt; do
-		case "${o}" in
+		case "${opt}" in
 			s)
 
 				;;
@@ -76,14 +77,14 @@
 	done
 
 	# API Anfrage
-	RESPONSE=$(curl -s "api.openweathermap.org/data/2.5/weather?q="$CITY"&units=metric&APPID="$APPID"")
+	response=$(curl -s "api.openweathermap.org/data/2.5/weather?q="$city"&units=metric&APPID="$appid"")
 
 	# Einlesen der interessanten Daten in Variablen
-	TEMPERATURE=$(sed -n 's/\(.*\)\("temp":\)\(-*[0-9]\+\.[0-9]\+\)\(.*\)/\3/p' <<< $RESPONSE)
-	WINDDIR=$(sed -n 's/\(.*\)\("deg":\)\(-*[0-9]\+\.[0-9]\+\)\(.*\)/\3/p' <<< $RESPONSE)
-	WINDSPEED=$(sed -n 's/\(.*\)\("speed":\)\(-*[0-9]\+\.[0-9]\+\)\(.*\)/\3/p' <<< $RESPONSE)
+	temperature=$(sed -n 's/\(.*\)\("temp":\)\(-*[0-9]\+\.[0-9]\+\)\(.*\)/\3/p' <<< $response)
+	winddir=$(sed -n 's/\(.*\)\("deg":\)\(-*[0-9]\+\.[0-9]\+\)\(.*\)/\3/p' <<< $response)
+	windspeed=$(sed -n 's/\(.*\)\("speed":\)\(-*[0-9]\+\.[0-9]\+\)\(.*\)/\3/p' <<< $response)
 
-	echo "full:"$RESPONSE
-	echo "temp:"$TEMPERATURE
-	echo "wind speed:"$WINDSPEED
-	echo $WINDDIR " degrees"
+	echo "full:"$response
+	echo "temp:"$temperature
+	echo "wind speed:"$windspeed
+	echo $winddir " degrees"
