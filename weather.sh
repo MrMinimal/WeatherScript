@@ -1,31 +1,89 @@
 #!/bin/bash
 # Dieses Script gibt die Wetterdaten für eine gewisse Stadt an
 # Dazu wird die API von http://openweathermap.org genutzt
+#
+# Beispiel-Aufruf:
+# ./weather.sh "Berlin"
+#
 
+# =========================================== TODO ============================================
+
+# TODO: Ggf. JSON Auslesen in eigene Funktion auslagern?
+# TODO: Vor Abgabe alle Tabs durch spaces ersetzten (dann fällt kopierter Code nicht auf)
+
+# TODO: -h --help
 # TODO: -c --current
 # TODO: -p --predicted
 # TODO: --no-intro option
 # TODO: --dialog
 
-# Die app id die von der API gefordert wird
-APPID=31c8db3e5477aeac1def817cc0bc66b3
+# ========================================= VARIABLES =========================================
 
-# TODO: dynamisch einlesen
-CITY=friedrichshafen
+	APPID=31c8db3e5477aeac1def817cc0bc66b3		# Die app id für die API
+	PRINTHELP=0									# Soll Hilfe ausgegeben werden?
+	CITY=										# Wetter für welche Stadt
 
-# Intro
-dialog 	--title "WetterScript" --infobox "von Tom Langwaldt und David Becker" 3 40
-sleep 1
+# ========================================= FUNCTIONS =========================================
 
-# API Anfrage
-RESPONSE=$(curl -s "api.openweathermap.org/data/2.5/weather?q="$CITY"&units=metric&APPID="$APPID"")
+	# Wird einmalig am Ende des Scripts aufgerufen um ggf. über die Verwendung zu informieren
+	usageHint()
+	{
+		if [ $PRINTHELP -eq 1 ]
+		then
+			echo "Verwendung: $0 [Stadtname, PLZ] TODO: ADD FURTHER ARGUMENTS"
+		fi
+	}
 
-# Einlesen der interessanten Daten in Variablen
-TEMPERATURE=$(sed -n 's/\(.*\)\("temp":\)\(-*[0-9]\+\.[0-9]\+\)\(.*\)/\3/p' <<< $RESPONSE)
-WINDDIR=$(sed -n 's/\(.*\)\("deg":\)\(-*[0-9]\+\.[0-9]\+\)\(.*\)/\3/p' <<< $RESPONSE)
-WINDSPEED=$(sed -n 's/\(.*\)\("speed":\)\(-*[0-9]\+\.[0-9]\+\)\(.*\)/\3/p' <<< $RESPONSE)
+# =========================================== ENTRY ===========================================
 
-echo "full:"$RESPONSE
-echo "temp:"$TEMPERATURE
-echo "wind speed:"$WINDSPEED
-echo $WINDDIR " degrees"
+	# Sicher gehen, dass die Hilfe am Ende des Scripts einmalig aufgerufen wird
+	trap usageHint EXIT
+
+	# Intro
+	echo -e "Wetter Script"
+	echo -e "von Tom Langwaldt und David Becker\n"
+
+	# Sanity check ob überhaupt Argumente übergeben wurden
+	if [ $# -eq 0 ]
+	then
+		PRINTHELP=1
+		exit 1
+	fi
+
+	# Versuch den Stadtname einer Variablen zuzuweisen
+	CITY=$1
+
+	# Sanity check ob der Stadtname eingegeben wurde
+	if [ -z $CITY]
+	then
+	    echo "Kein Stadtname eingelesen!"
+	    PRINTHELP=1
+	    exit 1
+	fi
+
+	while getopts ":h:c:p:" opt; do
+		case "${o}" in
+			s)
+
+				;;
+	        p)
+	            p=${OPTARG}
+	            ;;
+	        *)
+	            usage
+	            ;;
+	    esac
+	done
+
+	# API Anfrage
+	RESPONSE=$(curl -s "api.openweathermap.org/data/2.5/weather?q="$CITY"&units=metric&APPID="$APPID"")
+
+	# Einlesen der interessanten Daten in Variablen
+	TEMPERATURE=$(sed -n 's/\(.*\)\("temp":\)\(-*[0-9]\+\.[0-9]\+\)\(.*\)/\3/p' <<< $RESPONSE)
+	WINDDIR=$(sed -n 's/\(.*\)\("deg":\)\(-*[0-9]\+\.[0-9]\+\)\(.*\)/\3/p' <<< $RESPONSE)
+	WINDSPEED=$(sed -n 's/\(.*\)\("speed":\)\(-*[0-9]\+\.[0-9]\+\)\(.*\)/\3/p' <<< $RESPONSE)
+
+	echo "full:"$RESPONSE
+	echo "temp:"$TEMPERATURE
+	echo "wind speed:"$WINDSPEED
+	echo $WINDDIR " degrees"
