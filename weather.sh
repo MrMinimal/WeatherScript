@@ -20,8 +20,13 @@
 # ========================================= VARIABLES =========================================
 
 	appid=31c8db3e5477aeac1def817cc0bc66b3		# Die app id für die API
+	
 	printhelp=0									# Soll Hilfe ausgegeben werden?
 	city=										# Wetter für welche Stadt
+	response=									# Antwort der API
+	temperature=								# 
+	winddir=									#
+	windspeed=									#
 
 # ========================================= FUNCTIONS =========================================
 
