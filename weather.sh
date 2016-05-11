@@ -11,16 +11,16 @@
 # TODO: Ggf. JSON Auslesen in eigene Funktion auslagern?
 # TODO: Vor Abgabe alle Tabs durch spaces ersetzten (dann fällt kopierter Code nicht auf)
 
-# TODO: -h --help
-# TODO: -c --current
-# TODO: -p --predicted
-# TODO: --no-intro option
-# TODO: --dialog
+# TODO: -h # help
+# TODO: -c # current weather
+# TODO: -p # predicted weather
+# TODO: -w # winddaten ausgeben
+# TODO: -t # temperatur daten ausgeben
 
 # ========================================= VARIABLES =========================================
 
 	appid=31c8db3e5477aeac1def817cc0bc66b3		# Die app id für die API
-	
+
 	printhelp=0									# Soll Hilfe ausgegeben werden?
 	city=										# Wetter für welche Stadt
 	response=									# Antwort der API
@@ -76,7 +76,8 @@
 	            p=${OPTARG}
 	            ;;
 	        *)
-	            usage
+	            printhelp=1
+	            exit
 	            ;;
 	    esac
 	done
