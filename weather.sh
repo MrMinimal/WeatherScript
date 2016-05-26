@@ -23,16 +23,19 @@
 
 	appid=31c8db3e5477aeac1def817cc0bc66b3		# Die app id für die API
 
-	printhelp=0									# Soll Hilfe ausgegeben werden? [0=N, 1=J]
+	# Flags [0=N, 1=J]
+	printhelp=0									# Soll Hilfe ausgegeben werden?
+	showTemp=0									# Soll Luftdruck ausgegeben werden?
+	showWindDir=0								# Soll Windrichtung ausgegeben werden?
+	showWindSpd=0								# Soll Windgeschwindigkeit ausgegeben werden?
+	showPress=0									# Soll Luftdruck ausgegeben werden?
 
-
+	# Values
 	city=										# Wetter für welche Stadt
 	response=									# Antwort der API
 	temperature=								# 
 	winddir=									#
 	windspeed=									#
-
-	jsonVal=									# the return value of getJSONVal()
 
 # ========================================= FUNCTIONS =========================================
 
@@ -54,65 +57,39 @@
 	echo -e "Weather Script"
 	echo -e "by Tom Langwaldt und David Becker\n"
 
-	# Sanity check ob überhaupt Argumente übergeben wurden
-	if [ $# -eq 0 ]
-	then
-		echo -e "No arguments passsed"
-		printhelp=1
-		exit 1
-	fi
+	while getopts ":h :t :w :p" opt; do
+	 case $opt in
+	 	# Hilfe
+	    h)
+			printhelp=1
+			;;
 
-	# Stadtnamen (auch durch Komma getrennte) einlesen
-	for var in "$@"
-	do
-		# Sichger gehen, dass die Flags nicht dem Stadtnamen zugeordnet werden
-		if [[ "$var" =~ "-" ]]
-		then
-			break
-		fi
+		# Temperatur
+	    t)
+	    	showTemp=1
+	    	;;
 
-	    city=$city" "$var
-		echo "City is $city"
+	    # Winddaten
+	    w)
+	    	
+	    	;;
+
+	    # Druckdaten
+	    p)
+	    	
+	    	;;
+
+	    # Alle anderen Parameter
+	    \?)
+		    echo "Invalid option: -$OPTARG \n"
+		    printhelp=1
+		    exit 1
+		    ;;
+	  esac
 	done
 
-	# Sanity check ob der Stadtname eingegeben wurde
-	if [ -z "$city" ]
-	then
-	    echo "Could not read city name!"
-	    printhelp=1
-	    exit 1
-	fi
 
-	# Iterieren über die Eingabeargumente
-	while getopts "hawtp" arg; do
-		case $arg in
-			h)
-				# TODO: display help
-				printhelp=1
-				;;
-	        a)
-	            # TODO: display "all weather"
-	            ;;
-			w)
-				# TODO: set flag to display wind speed later
-				
-				;;
-			t)
-				# TODO: set flag to display temperature later
-				
-				;;
-			p)
-				# TODO: set flag to display pressure later
-				
-				;;
-	        ?)
-				# Bei nicht implementierten Argumenten die Hilfe ausgeben
-				echo "Invalid arguments"
-	            printhelp=1
-	            exit
-	            ;;
-	    esac
-	done
+	# TODO: ping server before api request
 
 	# API Anfrage
 	response=`curl -s "api.openweathermap.org/data/2.5/weather?q="$city"&units=metric&APPID="$appid""`
@@ -122,3 +99,8 @@
 	winddir=`sed -n 's/\(.*\)\("deg":\)\(-*[0-9]\+\.[0-9]\+\)\(.*\)/\3/p' <<< $response`
 	windspeed=`sed -n 's/\(.*\)\("speed":\)\(-*[0-9]\+\.[0-9]\+\)\(.*\)/\3/p' <<< $response`
 	pressure=`sed -n 's/\(.*\)\("pressure":\)\(-*[0-9]\+\.[0-9]\+\)\(.*\)/\3/p' <<< $response`
+
+	if [[ $showTemp -eq 1 ]]
+	then
+		echo "TODO: temp ausgeben"
+	fi
