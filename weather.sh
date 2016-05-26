@@ -62,10 +62,13 @@
 	 	# Stadt
 	 	c)
 			city=$OPTARG		# wenn kein Argument folgt, wird der case :) aufgerufen
+
+			# TODO: check if city starts with "-" which means that there was no option provided -> exit
 			;;
 	 	# Hilfe
 	    h)
 			printhelp=1
+			exit 1				# Es macht keinen Sinn das script weiter auszuführen, wenn der user den Befehl nicht versteht
 			;;
 
 		# Temperatur
@@ -108,7 +111,8 @@
 	# API Anfrage
 	response=`curl -s "api.openweathermap.org/data/2.5/weather?q="$city"&units=metric&APPID="$appid""`
 
-
+	echo $response
+	echo
 
 	echo "== Weather for $city =="
 
@@ -139,7 +143,7 @@
 	# Luftdruck
 	if [[ $showPress -eq 1 ]]
 	then
-		pressure=`sed -n 's/\(.*\)\("pressure":\)\(-*[0-9]\+\.[0-9]\+\)\(.*\)/\3/p' <<< $response`
+		pressure=`sed -n 's/\(.*\)\("pressure":\)\(.*\)\(,"humidity"\)\(.*\)/\3/p' <<< $response`
 
 		echo -e "Pressure\t$pressure hPa"
 	fi	
