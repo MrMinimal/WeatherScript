@@ -57,13 +57,14 @@
 	echo -e "Weather Script"
 	echo -e "by Tom Langwaldt und David Becker\n"
 
-	while getopts ":c: :h :t :w :p" opt; do
+	while getopts ":c: :h :a :t :w :p" opt; do
 	 case $opt in
 	 	# Stadt
 	 	c)
 			city=$OPTARG		# wenn kein Argument folgt, wird der case :) aufgerufen
 
 			# TODO: check if city starts with "-" which means that there was no option provided -> exit
+			# TODO: check if city is empty
 			;;
 	 	# Hilfe
 	    h)
@@ -71,6 +72,14 @@
 			exit 1				# Es macht keinen Sinn das script weiter auszuführen, wenn der user den Befehl nicht versteht
 			;;
 
+		# Alle Daten
+		a)
+			showTemp=1
+			showPress=1
+			showWindSpd=1
+			showWindDir=1
+			;;
+			
 		# Temperatur
 	    t)
 	    	showTemp=1
@@ -111,33 +120,30 @@
 	# API Anfrage
 	response=`curl -s "api.openweathermap.org/data/2.5/weather?q="$city"&units=metric&APPID="$appid""`
 
-	echo $response
-	echo
-
 	echo "== Weather for $city =="
 
 	# Temperatur
 	if [[ $showTemp -eq 1 ]]
 	then
-		temperature=`sed -n 's/\(.*\)\("temp":\)\(-*[0-9]\+\.[0-9]\+\)\(.*\)/\3/p' <<< $response`
+		temperature=`sed -n 's/\(.*\)\("temp":\)\(.*\)\(,"pressure"\)\(.*\)/\3/p' <<< $response`
 
 		echo -e "Temperature:\t$temperature degrees Celsius"
-	fi
-
-	# Windrichtung
-	if [[ $showWindDir -eq 1 ]]
-	then
-		winddir=`sed -n 's/\(.*\)\("deg":\)\(-*[0-9]\+\.[0-9]\+\)\(.*\)/\3/p' <<< $response`
-
-		echo -e "Winddir:\t$winddir degrees"
 	fi
 
 	# Windgeschwindigkeit
 	if [[ $showWindSpd -eq 1 ]]
 	then
-		windspeed=`sed -n 's/\(.*\)\("speed":\)\(-*[0-9]\+\.[0-9]\+\)\(.*\)/\3/p' <<< $response`
+		windspeed=`sed -n 's/\(.*\)\("speed":\)\(.*\)\(,"deg"\)\(.*\)/\3/p' <<< $response`
 
 		echo -e "Windspeed:\t$windspeed meters per second"
+	fi
+
+	# Windrichtung
+	if [[ $showWindDir -eq 1 ]]
+	then
+		winddir=`sed -n 's/\(.*\)\("deg":\)\(.*\)\(},"clouds"\)\(.*\)/\3/p' <<< $response`
+
+		echo -e "Winddir:\t$winddir degrees"
 	fi
 
 	# Luftdruck
