@@ -3,21 +3,11 @@
 # Dazu wird die API von http://openweathermap.org genutzt
 #
 # Beispiel-Aufruf:
-# ./weather.sh "Berlin"
+# ./weather.sh -c "London" -twp
 #
 
 # =========================================== TODO ============================================
-
-# TODO: Ggf. JSON Auslesen in eigene Funktion auslagern?
 # TODO: Vor Abgabe alle Tabs durch spaces ersetzten (dann fällt kopierter Code nicht auf)
-
-# TODO: -h 		# help
-# TODO: -a 		# all current weather
-# TODO: -w 		# alle windaten ausgeben
-# TODO: -w dir 	# windrichtung
-# TODO: -w spd 	# windgeschwindigkeit
-# TODO: -t 		# temperatur daten ausgeben
-# TODO: -p 		# luftdruck daten ausgeben
 
 # ========================================= VARIABLES =========================================
 
@@ -44,7 +34,9 @@
 	{
 		if [ $printhelp -eq 1 ]
 		then
-			echo "Usage: $0 [cityName, postCode] TODO: ADD FURTHER ARGUMENTS"
+			echo -e "\nUsage: $0 -c [City] [OPTIONS]\n"
+			echo -e "Example:"
+			echo -e "$0 -c London -twp"
 		fi
 	}
 
@@ -57,19 +49,35 @@
 	echo -e "Weather Script"
 	echo -e "by Tom Langwaldt und David Becker\n"
 
+	if [ $# -eq 0 ];
+	then
+	    printhelp=1
+	    exit 1
+	fi
+
 	while getopts ":c: :h :a :t :w :p" opt; do
 	 case $opt in
 	 	# Stadt
 	 	c)
 			city=$OPTARG		# wenn kein Argument folgt, wird der case :) aufgerufen
 
-			# TODO: check if city starts with "-" which means that there was no option provided -> exit
-			# TODO: check if city is empty
+			if [ -z "$city" ]; then
+		    	echo "Error: City name could not be read" >&2
+		    	printhelp=1
+		    	exit 1
+			fi
+
+			if [[ ${city:0:1} == '-' ]]
+			then
+			    echo "Error: -c expects an argument" >&2
+		    	printhelp=1
+		    	exit 1
+			fi
 			;;
 	 	# Hilfe
 	    h)
 			printhelp=1
-			exit 1				# Es macht keinen Sinn das script weiter auszuführen, wenn der user den Befehl nicht versteht
+			exit 1
 			;;
 
 		# Alle Daten
@@ -98,20 +106,19 @@
 
 	    # Alle anderen Parameter
 	    \?)
-		    echo "Unknown option: -$OPTARG \n"
+		    echo "Error: Unknown option: -$OPTARG \n" >&2
 		    printhelp=1
 		    exit 1
 		    ;;
 
 		# Wenn Optionen fehlen, falls ein Argument Befehle erwartet
 		:)
-			echo "Option -$OPTARG requires an argument"
+			echo "Error: Option -$OPTARG requires an argument" >&2
+			printhelp=1
 			exit
 			;;
 	  esac
 	done
-
-	# TODO: make sure that city was set, otherwise abort
 
 	# TODO: ping server before api request
 
