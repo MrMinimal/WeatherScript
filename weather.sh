@@ -57,8 +57,12 @@
 	echo -e "Weather Script"
 	echo -e "by Tom Langwaldt und David Becker\n"
 
-	while getopts ":h :t :w :p" opt; do
+	while getopts ":c: :h :t :w :p" opt; do
 	 case $opt in
+	 	# Stadt
+	 	c)
+			city=$OPTARG		# wenn kein Argument folgt, wird der case :) aufgerufen
+			;;
 	 	# Hilfe
 	    h)
 			printhelp=1
@@ -71,36 +75,73 @@
 
 	    # Winddaten
 	    w)
-	    	
+	    	showWindSpd=1
+	    	showWindDir=1
 	    	;;
 
 	    # Druckdaten
 	    p)
-	    	
+	    	showPress=1
 	    	;;
 
 	    # Alle anderen Parameter
 	    \?)
-		    echo "Invalid option: -$OPTARG \n"
+		    echo "Unknown option: -$OPTARG \n"
 		    printhelp=1
 		    exit 1
 		    ;;
+
+		# Wenn Optionen fehlen, falls ein Argument Befehle erwartet
+		:)
+			echo "Option -$OPTARG requires an argument"
+			exit
+			;;
 	  esac
 	done
 
+	# TODO: make sure that city was set, otherwise abort
 
 	# TODO: ping server before api request
+
+
 
 	# API Anfrage
 	response=`curl -s "api.openweathermap.org/data/2.5/weather?q="$city"&units=metric&APPID="$appid""`
 
-	# Einlesen der interessanten Daten in Variablen
-	temperature=`sed -n 's/\(.*\)\("temp":\)\(-*[0-9]\+\.[0-9]\+\)\(.*\)/\3/p' <<< $response`
-	winddir=`sed -n 's/\(.*\)\("deg":\)\(-*[0-9]\+\.[0-9]\+\)\(.*\)/\3/p' <<< $response`
-	windspeed=`sed -n 's/\(.*\)\("speed":\)\(-*[0-9]\+\.[0-9]\+\)\(.*\)/\3/p' <<< $response`
-	pressure=`sed -n 's/\(.*\)\("pressure":\)\(-*[0-9]\+\.[0-9]\+\)\(.*\)/\3/p' <<< $response`
 
+
+	echo "== Weather for $city =="
+
+	# Temperatur
 	if [[ $showTemp -eq 1 ]]
 	then
-		echo "TODO: temp ausgeben"
+		temperature=`sed -n 's/\(.*\)\("temp":\)\(-*[0-9]\+\.[0-9]\+\)\(.*\)/\3/p' <<< $response`
+
+		echo -e "Temperature:\t$temperature degrees Celsius"
 	fi
+
+	# Windrichtung
+	if [[ $showWindDir -eq 1 ]]
+	then
+		winddir=`sed -n 's/\(.*\)\("deg":\)\(-*[0-9]\+\.[0-9]\+\)\(.*\)/\3/p' <<< $response`
+
+		echo -e "Winddir:\t$winddir degrees"
+	fi
+
+	# Windgeschwindigkeit
+	if [[ $showWindSpd -eq 1 ]]
+	then
+		windspeed=`sed -n 's/\(.*\)\("speed":\)\(-*[0-9]\+\.[0-9]\+\)\(.*\)/\3/p' <<< $response`
+
+		echo -e "Windspeed:\t$windspeed meters per second"
+	fi
+
+	# Luftdruck
+	if [[ $showPress -eq 1 ]]
+	then
+		pressure=`sed -n 's/\(.*\)\("pressure":\)\(-*[0-9]\+\.[0-9]\+\)\(.*\)/\3/p' <<< $response`
+
+		echo -e "Pressure\t$pressure hPa"
+	fi	
+
+# =========================================== EXIT ============================================
