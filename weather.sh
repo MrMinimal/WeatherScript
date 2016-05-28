@@ -136,7 +136,15 @@
 	# Temperatur
 	if [[ $showTemp -eq 1 ]]
 	then
-		temperature=`sed -n 's/\(.*\)\("temp":\)\(.*[0-9]\)\(,"pressure"\)\(.*\)/\3/p' <<< $response`
+		temperatureInt=`sed -n 's/\(.*\)\("temp":\)\([0-9]*\)\(.*\)/\3/p' <<< $response`
+		temperatureFrac=`sed -n 's/\(.*\)\("temp":\)\([0-9]*\)\(.\)\([0-9]*\)\(.*\)/\5/p' <<< $response`
+
+		temperature=$temperatureInt
+
+		if [[ $temperatureFrac ]]
+		then
+			temperature=$temperature.$temperatureFrac
+		fi		
 
 		echo -e "Temperature:\t$temperature degrees Celsius"
 	fi
@@ -160,11 +168,14 @@
 	# Windrichtung
 	if [[ $showWindDir -eq 1 ]]
 	then
-		winddir=`sed -n 's/\(.*\)\("deg":\)\(.*[0-9]\)\(},"rain"\)\(.*\)/\3/p' <<< $response`
+		winddirInt=`sed -n 's/\(.*\)\("deg":\)\([0-9]*\)\(.*\)/\3/p' <<< $response`
+		winddirFrac=`sed -n 's/\(.*\)\("deg":\)\([0-9]*\)\(.\)\([0-9]*\)\(.*\)/\5/p' <<< $response`
 
-		if [[ -z $windspeed ]]
+		winddir=$winddirInt
+
+		if [[ $winddirFrac ]]
 		then
-			winddir=`sed -n 's/\(.*\)\("deg":\)\(.*[0-9]\)\(},"clouds"\)\(.*\)/\3/p' <<< $response`
+			winddir=$winddir.$winddirFrac
 		fi
 
 		# Sicher gehen, dass überhaupt eine Windrichtung gemessen wurde
@@ -177,7 +188,15 @@
 	# Luftdruck
 	if [[ $showPress -eq 1 ]]
 	then
-		pressure=`sed -n 's/\(.*\)\("pressure":\)\(.*[0-9]\)\(,"humidity"\)\(.*\)/\3/p' <<< $response`
+		pressureInt=`sed -n 's/\(.*\)\("pressure":\)\([0-9]*\)\(.*\)/\3/p' <<< $response`
+		pressureFrac=`sed -n 's/\(.*\)\("pressure":\)\([0-9]*\)\(.\)\([0-9]*\)\(.*\)/\5/p' <<< $response`
+
+		pressure=$pressureInt
+
+		if [[ $pressureFrac ]]
+		then
+			pressure=$pressure.$pressureFrac
+		fi
 
 		echo -e "Pressure\t$pressure hPa"
 	fi	
