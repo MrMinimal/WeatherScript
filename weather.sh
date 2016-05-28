@@ -12,8 +12,11 @@
 
 # ========================================= VARIABLES =========================================
 
+	# Constants
 	appid=31c8db3e5477aeac1def817cc0bc66b3		# Die app id für die API
 	ServerIP=144.76.83.20						# Wetter API sever
+
+
 
 	# Flags [0=N, 1=J]
 	printhelp=0									# Soll Hilfe ausgegeben werden?
@@ -22,21 +25,23 @@
 	showWindSpd=0								# Soll Windgeschwindigkeit ausgegeben werden?
 	showPress=0									# Soll Luftdruck ausgegeben werden?
 
+
+
 	# Values
 	city=										# Wetter für welche Stadt
 	response=									# Antwort der API
 
-	temperature=								# 
-	temperatureInt=
-	temperatureFrac=
+	temperature=								# der finale Wert für die Temperatur
+	temperatureInt=								# Zahl vor dem Komma
+	temperatureFrac=							# Zahl nach dem Komma (falls vorhanden)
 
-	winddir=									#
-	winddirInt=
-	windspeedFrac=
+	winddir=									# der finale Wert für die Windrichtung
+	winddirInt=									# Zahl vor dem Komma
+	windspeedFrac=								# Zahl nach dem Komma (falls vorhanden)
 
-	windspeed=									#
-	windspeedInt=
-	windspeedFrac=
+	windspeed=									# der finale Wert für die Windgeschwindigkeit
+	windspeedInt=								# Zahl vor dem Komma
+	windspeedFrac=								# Zahl nach dem Komma (falls vorhanden)
 
 # ========================================= FUNCTIONS =========================================
 
@@ -146,7 +151,7 @@
 
 	# API Anfrage
 	response=`curl -s "api.openweathermap.org/data/2.5/weather?q="$city"&units=metric&APPID="$appid""`
-	
+
 
 	echo "== Weather for $city =="
 
