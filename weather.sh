@@ -168,7 +168,11 @@
 			temperature=$temperature.$temperatureFrac
 		fi		
 
-		echo -e "Temperature:\t$temperature degrees Celsius"
+		# Sicher gehen, dass überhaupt eine Temperatur gemessen wurde
+		if [[ $temperature ]]; 
+		then
+	    	echo -e "Temperature:\t$temperature degrees Celsius"
+		fi
 	fi
 
 	# Windgeschwindigkeit
@@ -184,7 +188,11 @@
 			windspeed=$windspeed.$windspeedFrac
 		fi
 
-		echo -e "Windspeed:\t$windspeed meters per second"
+		# Sicher gehen, dass überhaupt eine Windgeschwindigkeit gemessen wurde
+		if [[ $windspeed ]]; 
+		then
+	    	echo -e "Windspeed:\t$windspeed meters per second"
+		fi
 	fi
 
 	# Windrichtung
@@ -220,7 +228,11 @@
 			pressure=$pressure.$pressureFrac
 		fi
 
-		echo -e "Pressure\t$pressure hPa"
+		# Sicher gehen, dass überhaupt ein Luftdruck gemessen wurde
+		if [[ $pressure ]]; 
+		then
+			echo -e "Pressure\t$pressure hPa"
+		fi
 	fi	
 
 # =========================================== EXIT ============================================
