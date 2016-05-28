@@ -13,6 +13,7 @@
 # ========================================= VARIABLES =========================================
 
 	appid=31c8db3e5477aeac1def817cc0bc66b3		# Die app id für die API
+	ServerIP=144.76.83.20						# Wetter API sever
 
 	# Flags [0=N, 1=J]
 	printhelp=0									# Soll Hilfe ausgegeben werden?
@@ -24,9 +25,18 @@
 	# Values
 	city=										# Wetter für welche Stadt
 	response=									# Antwort der API
+
 	temperature=								# 
+	temperatureInt=
+	temperatureFrac=
+
 	winddir=									#
+	winddirInt=
+	windspeedFrac=
+
 	windspeed=									#
+	windspeedInt=
+	windspeedFrac=
 
 # ========================================= FUNCTIONS =========================================
 
@@ -122,14 +132,21 @@
 	  esac
 	done
 
-	# TODO: ping server before api request
+	# Wetter API anpingen ob verfügbar und output nicht weiter verwenden
+	ping -c 1 $ServerIP > /dev/null
 
-
+	# Überprüfung ob der ping zum server erfolgreich war
+	if [[ $? == 0 ]]
+	then
+		echo -e "Fetching weather data...\n"
+	else
+		echo "Error: Could not reach weather server" >&2
+		exit 1
+	fi
 
 	# API Anfrage
 	response=`curl -s "api.openweathermap.org/data/2.5/weather?q="$city"&units=metric&APPID="$appid""`
-
-	echo $response
+	
 
 	echo "== Weather for $city =="
 
