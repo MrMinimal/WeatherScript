@@ -1,4 +1,5 @@
 #!/bin/bash
+#
 # Dieses Script gibt die Wetterdaten für eine gewisse Stadt an
 # Dazu wird die API von http://openweathermap.org genutzt
 #
@@ -49,7 +50,7 @@
 	echo -e "Weather Script"
 	echo -e "by Tom Langwaldt und David Becker\n"
 
-	if [ $# -eq 0 ];
+	if [[ $# -eq 0 ]];
 	then
 	    printhelp=1
 	    exit 1
@@ -61,7 +62,8 @@
 	 	c)
 			city=$OPTARG		# wenn kein Argument folgt, wird der case :) aufgerufen
 
-			if [ -z "$city" ]; then
+			if [[ -z "$city" ]]; 
+			then
 		    	echo "Error: City name could not be read" >&2
 		    	printhelp=1
 		    	exit 1
@@ -127,12 +129,14 @@
 	# API Anfrage
 	response=`curl -s "api.openweathermap.org/data/2.5/weather?q="$city"&units=metric&APPID="$appid""`
 
+	echo $response
+
 	echo "== Weather for $city =="
 
 	# Temperatur
 	if [[ $showTemp -eq 1 ]]
 	then
-		temperature=`sed -n 's/\(.*\)\("temp":\)\(.*\)\(,"pressure"\)\(.*\)/\3/p' <<< $response`
+		temperature=`sed -n 's/\(.*\)\("temp":\)\(.*[0-9]\)\(,"pressure"\)\(.*\)/\3/p' <<< $response`
 
 		echo -e "Temperature:\t$temperature degrees Celsius"
 	fi
@@ -140,7 +144,17 @@
 	# Windgeschwindigkeit
 	if [[ $showWindSpd -eq 1 ]]
 	then
-		windspeed=`sed -n 's/\(.*\)\("speed":\)\(.*\)\(,"deg"\)\(.*\)/\3/p' <<< $response`
+		windspeed=`sed -n 's/\(.*\)\("speed":\)\(.*[0-9]\)\(},"clouds"\)\(.*\)/\3/p' <<< $response`
+
+		if [[ -z $windspeed ]]
+		then
+			windspeed=`sed -n 's/\(.*\)\("speed":\)\(.*[0-9]\)\(},"rain"\)\(.*\)/\3/p' <<< $response`
+		fi
+
+		if [[ -z $windspeed ]]
+		then
+			windspeed=`sed -n 's/\(.*\)\("speed":\)\(.*[0-9]\)\(,"deg"\)\(.*\)/\3/p' <<< $response`
+		fi
 
 		echo -e "Windspeed:\t$windspeed meters per second"
 	fi
@@ -148,15 +162,24 @@
 	# Windrichtung
 	if [[ $showWindDir -eq 1 ]]
 	then
-		winddir=`sed -n 's/\(.*\)\("deg":\)\(.*\)\(},"clouds"\)\(.*\)/\3/p' <<< $response`
+		winddir=`sed -n 's/\(.*\)\("deg":\)\(.*[0-9]\)\(},"rain"\)\(.*\)/\3/p' <<< $response`
 
-		echo -e "Winddir:\t$winddir degrees"
+		if [[ -z $windspeed ]]
+		then
+			winddir=`sed -n 's/\(.*\)\("deg":\)\(.*[0-9]\)\(},"clouds"\)\(.*\)/\3/p' <<< $response`
+		fi
+
+		# Sicher gehen, dass überhaupt eine Windrichtung gemessen wurde
+		if [[ $winddir ]]; 
+		then
+	    	echo -e "Winddir:\t$winddir degrees"
+		fi
 	fi
 
 	# Luftdruck
 	if [[ $showPress -eq 1 ]]
 	then
-		pressure=`sed -n 's/\(.*\)\("pressure":\)\(.*\)\(,"humidity"\)\(.*\)/\3/p' <<< $response`
+		pressure=`sed -n 's/\(.*\)\("pressure":\)\(.*[0-9]\)\(,"humidity"\)\(.*\)/\3/p' <<< $response`
 
 		echo -e "Pressure\t$pressure hPa"
 	fi	
