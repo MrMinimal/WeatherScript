@@ -144,16 +144,14 @@
 	# Windgeschwindigkeit
 	if [[ $showWindSpd -eq 1 ]]
 	then
-		windspeed=`sed -n 's/\(.*\)\("speed":\)\(.*[0-9]\)\(},"clouds"\)\(.*\)/\3/p' <<< $response`
+		windspeedInt=`sed -n 's/\(.*\)\("speed":\)\([0-9]*\)\(.*\)/\3/p' <<< $response`
+		windspeedFrac=`sed -n 's/\(.*\)\("speed":\)\([0-9]*\)\(.\)\([0-9]*\)\(.*\)/\5/p' <<< $response`
 
-		if [[ -z $windspeed ]]
-		then
-			windspeed=`sed -n 's/\(.*\)\("speed":\)\(.*[0-9]\)\(},"rain"\)\(.*\)/\3/p' <<< $response`
-		fi
+		windspeed=$windspeedInt
 
-		if [[ -z $windspeed ]]
+		if [[ $windspeedFrac ]]
 		then
-			windspeed=`sed -n 's/\(.*\)\("speed":\)\(.*[0-9]\)\(,"deg"\)\(.*\)/\3/p' <<< $response`
+			windspeed=$windspeed.$windspeedFrac
 		fi
 
 		echo -e "Windspeed:\t$windspeed meters per second"
