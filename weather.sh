@@ -18,7 +18,7 @@
 
     # Flags [0=N, 1=J]
     printhelp=0                                 # Soll Hilfe ausgegeben werden?
-    showTemp=0                                  # Soll Luftdruck ausgegeben werden?
+    showTemp=0                                  # Soll Temperatur ausgegeben werden?
     showWindDir=0                               # Soll Windrichtung ausgegeben werden?
     showWindSpd=0                               # Soll Windgeschwindigkeit ausgegeben werden?
     showPress=0                                 # Soll Luftdruck ausgegeben werden?
@@ -63,12 +63,14 @@
     echo -e "Weather Script"
     echo -e "by Tom Langwaldt und David Becker\n"
 
+    # Wenn der User dem Script keine Parameter übergibt, Hilfe ausgeben
     if [[ $# -eq 0 ]];
     then
         printhelp=1
         exit 1
     fi
 
+    # Über Parameter iterieren
     while getopts ":c: :h :a :t :w :p" opt; do
      case $opt in
         # Stadt
