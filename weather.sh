@@ -13,6 +13,7 @@
     # Constants
     appid=31c8db3e5477aeac1def817cc0bc66b3      # Die app id für die API
     ServerIP=144.76.83.20                       # Wetter API sever
+    fileName=weatherOutput                      # Dateiname für die Datei die die Daten enthält
 
 
 
@@ -41,12 +42,16 @@
     windspeedInt=                               # Zahl vor dem Komma
     windspeedFrac=                              # Zahl nach dem Komma (falls vorhanden)
 
+    pressure=                                   # der finale Werlt für den Luftdruck
+    pressureInt=                                # Zahl vor dem Komma
+    pressureFrac=                               # Zahl nach dem Komma (falls vorhanden)
+
 # ========================================= FUNCTIONS =========================================
 
     # Wird einmalig am Ende des Scripts aufgerufen um ggf. über die Verwendung zu informieren
     usageHint()
     {
-        if [ $printhelp -eq 1 ]
+        if [[ $printhelp -eq 1 ]]
         then
             echo -e "\nUsage: $0 -c [City] [OPTIONS]\n"
             echo -e "Example:"
@@ -55,6 +60,10 @@
     }
 
 # =========================================== ENTRY ===========================================
+
+
+# Jeglichen Output in eine Datei schreiben
+{
 
     # Sicher gehen, dass die Hilfe am Ende des Scripts einmalig aufgerufen wird
     trap usageHint EXIT
@@ -234,5 +243,12 @@
             echo -e "Pressure\t$pressure hPa"
         fi
     fi  
+
+
+# Jeglichen output in eine Datei pipen
+} > $fileName
+    
+    # Inhalt der Da
+    cat ./$fileName
 
 # =========================================== EXIT ============================================
