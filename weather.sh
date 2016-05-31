@@ -136,7 +136,7 @@
 
         # Wenn Optionen fehlen, falls ein Argument Befehle erwartet
         :)
-            echo "Error: Option -$OPTARG requires an argument" >&2
+            echo "Error: -$OPTARG requires city name" >&2
             printhelp=1
             exit
             ;;
