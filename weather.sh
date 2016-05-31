@@ -57,12 +57,12 @@
             echo -e "\nUsage: $0 -c [City] [OPTIONS]\n"
             echo -e "Beispiel:"
             echo -e "$0 -c London -a"
-		echo -e "\n-c Muss angegeben werden und erwartet einen Städtenamen als übergabeparameter"
-		echo -e "-h gibt die Hilfe aus"	
-		echo -e "-a gibt all Werte aus"
-		echo -e "-t gibt nur die Temperaturdaten aus"
-		echo -e "-w gibt die Winddaten (Windrichtung / Windgeschwindichkeit) aus"
-		echo -e "-p gibt den Umgebungsdruck an"
+    		echo -e "\n-c Muss angegeben werden und erwartet einen Städtenamen als übergabeparameter"
+    		echo -e "-h gibt die Hilfe aus"	
+    		echo -e "-a gibt all Werte aus"
+    		echo -e "-t gibt nur die Temperaturdaten aus"
+    		echo -e "-w gibt die Winddaten (Windrichtung / Windgeschwindichkeit) aus"
+    		echo -e "-p gibt den Umgebungsdruck an"
         fi
     }
 
@@ -138,11 +138,11 @@
 
         # Alle anderen Parameter
         \?)
-            echo "Fehler: unbekante option: -$OPTARG \n" >&2
+            echo "Fehler: Unbekannte Option: -$OPTARG \n" >&2
             printhelp=1
             exit 1
             ;;
-# Wenn Optionen fehlen, falls ein Argument Befehle erwartet
+        # Wenn Optionen fehlen, falls ein Argument Befehle erwartet
         :)
             echo "Fehler: die Option -$OPTARG benötigt ein Argument" >&2
             printhelp=1
@@ -153,7 +153,7 @@
 
     if [[ $cFlagProvided == 0 ]]
     then
-        echo "Error: Required -c parameter was not provided" >&2
+        echo "Fehler: Benötigt -c Parameter für eine Stadt" >&2
         exit 1
     fi
 
@@ -163,9 +163,9 @@
     # Überprüfung ob der ping zum server erfolgreich war
     if [[ $? == 0 ]]
     then
-        echo -e "Fetching weather data...\n"
+        echo -e "Hole Wetterdaten...\n"
     else
-        echo "Error: Could not reach weather server" >&2
+        echo "Fehler: Konnte Wetterserver nicht erreichen" >&2
         exit 1
     fi
 
@@ -175,7 +175,7 @@
 
 # Wetterdaten in Datei schreiben
 {
-    echo "== Weather for $city =="
+    echo "== Wetter für $city =="
 
     # Temperatur
     if [[ $showTemp -eq 1 ]]
@@ -193,7 +193,7 @@
         # Sicher gehen, dass überhaupt eine Temperatur gemessen wurde
         if [[ $temperature ]]; 
         then
-            echo -e "Temperature:\t$temperature degrees Celsius"
+            echo -e "Temperatur:\t$temperature Grad Celsius"
         fi
     fi
 
@@ -213,7 +213,7 @@
         # Sicher gehen, dass überhaupt eine Windgeschwindigkeit gemessen wurde
         if [[ $windspeed ]]; 
         then
-            echo -e "Windspeed:\t$windspeed meters per second"
+            echo -e "Windgeschw:\t$windspeed meters per second"
         fi
     fi
 
@@ -233,7 +233,7 @@
         # Sicher gehen, dass überhaupt eine Windrichtung gemessen wurde
         if [[ $winddir ]]; 
         then
-            echo -e "Winddir:\t$winddir degrees"
+            echo -e "Windrichtung:\t$winddir degrees"
         fi
     fi
 
@@ -253,7 +253,7 @@
         # Sicher gehen, dass überhaupt ein Luftdruck gemessen wurde
         if [[ $pressure ]]; 
         then
-            echo -e "Pressure\t$pressure hPa"
+            echo -e "Luftdruck:\t$pressure hPa"
         fi
     fi  
 
