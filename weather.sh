@@ -62,9 +62,6 @@
 # =========================================== ENTRY ===========================================
 
 
-# Jeglichen Output in eine Datei schreiben
-{
-
     # Sicher gehen, dass die Hilfe am Ende des Scripts einmalig aufgerufen wird
     trap usageHint EXIT
 
@@ -162,6 +159,8 @@
     response=`curl -s "api.openweathermap.org/data/2.5/weather?q="$city"&units=metric&APPID="$appid""`
 
 
+# Wetterdaten in Datei schreiben
+{
     echo "== Weather for $city =="
 
     # Temperatur
