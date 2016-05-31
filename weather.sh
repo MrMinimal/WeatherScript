@@ -18,6 +18,7 @@
 
 
     # Flags [0=N, 1=J]
+    cFlagProvided=0                             # wurde dem Script eine -c Flag übergeben?
     printhelp=0                                 # Soll Hilfe ausgegeben werden?
     showTemp=0                                  # Soll Temperatur ausgegeben werden?
     showWindDir=0                               # Soll Windrichtung ausgegeben werden?
@@ -68,9 +69,6 @@
 # =========================================== ENTRY ===========================================
 
 
-# Jeglichen Output in eine Datei schreiben
-{
-
     # Sicher gehen, dass die Hilfe am Ende des Scripts einmalig aufgerufen wird
     trap usageHint EXIT
 
@@ -102,9 +100,11 @@
             if [[ ${city:0:1} == '-' ]]
             then
                 echo "Fehler: Keine Stadt angegeben -c erwartet einen Städtenamen als übergabeparameter"
-                printhelp=1
+		printhelp=1
                 exit 1
             fi
+
+            cFlagProvided=1
             ;;
         # Hilfe
         h)
@@ -142,15 +142,20 @@
             printhelp=1
             exit 1
             ;;
-
-        # Wenn Optionen fehlen, falls ein Argument Befehle erwartet
+# Wenn Optionen fehlen, falls ein Argument Befehle erwartet
         :)
-            echo "Fehler: die Option -$OPTARG benötigt ein rgument" >&2
+            echo "Fehler: die Option -$OPTARG benötigt ein Argument" >&2
             printhelp=1
             exit
             ;;
       esac
     done
+
+    if [[ $cFlagProvided == 0 ]]
+    then
+        echo "Error: Required -c parameter was not provided" >&2
+        exit 1
+    fi
 
     # Wetter API anpingen ob verfügbar und output nicht weiter verwenden
     ping -c 1 $ServerIP > /dev/null
@@ -168,6 +173,8 @@
     response=`curl -s "api.openweathermap.org/data/2.5/weather?q="$city"&units=metric&APPID="$appid""`
 
 
+# Wetterdaten in Datei schreiben
+{
     echo "== Weather for $city =="
 
     # Temperatur
