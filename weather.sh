@@ -54,8 +54,14 @@
         if [[ $printhelp -eq 1 ]]
         then
             echo -e "\nUsage: $0 -c [City] [OPTIONS]\n"
-            echo -e "Example:"
-            echo -e "$0 -c London -twp"
+            echo -e "Beispiel:"
+            echo -e "$0 -c London -a"
+		echo -e "\n-c Muss angegeben werden und erwartet einen Städtenamen als übergabeparameter"
+		echo -e "-h gibt die Hilfe aus"	
+		echo -e "-a gibt all Werte aus"
+		echo -e "-t gibt nur die Temperaturdaten aus"
+		echo -e "-w gibt die Winddaten (Windrichtung / Windgeschwindichkeit) aus"
+		echo -e "-p gibt den Umgebungsdruck an"
         fi
     }
 
@@ -70,7 +76,7 @@
 
     # Intro
     echo -e "Weather Script"
-    echo -e "by Tom Langwaldt und David Becker\n"
+    echo -e "von Tom Langwaldt und David Becker\n"
 
     # Wenn der User dem Script keine Parameter übergibt, Hilfe ausgeben
     if [[ $# -eq 0 ]];
@@ -88,14 +94,14 @@
 
             if [[ -z "$city" ]]; 
             then
-                echo "Error: City name could not be read" >&2
+                echo "Fehler: Keine Stadt angegeben -c erwartet einen Städtenamen als übergabeparameter"
                 printhelp=1
                 exit 1
             fi
 
             if [[ ${city:0:1} == '-' ]]
             then
-                echo "Error: -c expects an argument" >&2
+                echo "Fehler: Keine Stadt angegeben -c erwartet einen Städtenamen als übergabeparameter"
                 printhelp=1
                 exit 1
             fi
@@ -132,14 +138,14 @@
 
         # Alle anderen Parameter
         \?)
-            echo "Error: Unknown option: -$OPTARG \n" >&2
+            echo "Fehler: unbekante option: -$OPTARG \n" >&2
             printhelp=1
             exit 1
             ;;
 
         # Wenn Optionen fehlen, falls ein Argument Befehle erwartet
         :)
-            echo "Error: Option -$OPTARG requires an argument" >&2
+            echo "Fehler: die Option -$OPTARG benötigt ein rgument" >&2
             printhelp=1
             exit
             ;;
