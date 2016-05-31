@@ -92,7 +92,7 @@
 
             if [[ ${city:0:1} == '-' ]]
             then
-                echo "Error: -c expects an argument" >&2
+                echo "Error: -c expects city name as argument" >&2
                 printhelp=1
                 exit 1
             fi
@@ -136,7 +136,7 @@
 
         # Wenn Optionen fehlen, falls ein Argument Befehle erwartet
         :)
-            echo "Error: -$OPTARG requires city name" >&2
+            echo "Error: -$OPTARG requires city name as argument" >&2
             printhelp=1
             exit
             ;;
