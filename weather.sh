@@ -18,6 +18,7 @@
 
 
     # Flags [0=N, 1=J]
+    cFlagProvided=0                             # wurde dem Script eine -c Flag übergeben?
     printhelp=0                                 # Soll Hilfe ausgegeben werden?
     showTemp=0                                  # Soll Temperatur ausgegeben werden?
     showWindDir=0                               # Soll Windrichtung ausgegeben werden?
@@ -96,6 +97,8 @@
                 printhelp=1
                 exit 1
             fi
+
+            cFlagProvided=1
             ;;
         # Hilfe
         h)
@@ -142,6 +145,12 @@
             ;;
       esac
     done
+
+    if [[ $cFlagProvided == 0 ]]
+    then
+        echo "Error: Required -c parameter was not provided" >&2
+        exit 1
+    fi
 
     # Wetter API anpingen ob verfügbar und output nicht weiter verwenden
     ping -c 1 $ServerIP > /dev/null
