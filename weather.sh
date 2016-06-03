@@ -24,7 +24,7 @@
     showWindDir=0                               # Soll Windrichtung ausgegeben werden?
     showWindSpd=0                               # Soll Windgeschwindigkeit ausgegeben werden?
     showPress=0                                 # Soll Luftdruck ausgegeben werden?
-
+    zeigeWetter=0				# soll Wetter (Bewölkt, Sonnig usw.) angezeigt werden?
 
 
     # Values
@@ -46,6 +46,8 @@
     pressure=                                   # der finale Werlt für den Luftdruck
     pressureInt=                                # Zahl vor dem Komma
     pressureFrac=                               # Zahl nach dem Komma (falls vorhanden)
+
+    wetter=					# Wetter (Bewölkt, Sonnig usw.)
 
 # ========================================= FUNCTIONS =========================================
 
@@ -84,7 +86,7 @@
     fi
 
     # Über Parameter iterieren
-    while getopts ":c: :h :a :t :w :p" opt; do
+    while getopts ":c: :h :a :t :w :p :z" opt; do
      case $opt in
         # Stadt
         c)
@@ -118,6 +120,7 @@
             showPress=1
             showWindSpd=1
             showWindDir=1
+	    zeigeWetter=1
             ;;
             
         # Temperatur
@@ -135,6 +138,11 @@
         p)
             showPress=1
             ;;
+	
+	# Zustand
+	z)
+	    zeigeWetter=1
+	    ;;
 
         # Alle anderen Parameter
         \?)
@@ -170,12 +178,26 @@
     fi
 
     # API Anfrage
-    response=`curl -s "api.openweathermap.org/data/2.5/weather?q="$city"&units=metric&APPID="$appid""`
+    response=`curl -s "api.openweathermap.org/data/2.5/weather?q="$city"&units=metric&lang=de&APPID="$appid""`
 
 
 # Wetterdaten in Datei schreiben
 {
     echo "== Wetter für $city =="
+
+    # WetterZustand
+    if [[ $zeigeWetter -eq 1 ]]
+    then
+	#wetter=$response
+	
+        wetter=`sed -n 's/\(.*\)\("description":"\)\(.*\)\(","icon\)\(.*\)/\3/p' <<< $response`
+	#sicher gehen, dass überhaut ein wetter angegeben wurde
+	if [[ $wetter ]]
+	then
+	    echo -e "Wetter: \t$wetter "
+	fi	
+    fi
+
 
     # Temperatur
     if [[ $showTemp -eq 1 ]]
