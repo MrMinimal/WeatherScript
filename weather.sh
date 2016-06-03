@@ -47,7 +47,7 @@
     pressureInt=                                # Zahl vor dem Komma
     pressureFrac=                               # Zahl nach dem Komma (falls vorhanden)
 
-    wetter=					# Wetter (Bewölkt, Sonnig usw.)
+    wetter=					                    # Wetter (Bewölkt, Sonnig usw.)
 
 # ========================================= FUNCTIONS =========================================
 
@@ -75,7 +75,7 @@
     trap usageHint EXIT
 
     # Intro
-    echo -e "Weather Script"
+    echo -e "Wetter Script"
     echo -e "von Tom Langwaldt und David Becker\n"
 
     # Wenn der User dem Script keine Parameter übergibt, Hilfe ausgeben
@@ -102,7 +102,7 @@
             if [[ ${city:0:1} == '-' ]]
             then
                 echo "Fehler: Keine Stadt angegeben -c erwartet einen Städtenamen als übergabeparameter"
-		printhelp=1
+                printhelp=1
                 exit 1
             fi
 
@@ -120,7 +120,7 @@
             showPress=1
             showWindSpd=1
             showWindDir=1
-	    zeigeWetter=1
+            zeigeWetter=1
             ;;
             
         # Temperatur
@@ -188,14 +188,13 @@
     # WetterZustand
     if [[ $zeigeWetter -eq 1 ]]
     then
-	#wetter=$response
-	
         wetter=`sed -n 's/\(.*\)\("description":"\)\(.*\)\(","icon\)\(.*\)/\3/p' <<< $response`
-	#sicher gehen, dass überhaut ein wetter angegeben wurde
-	if [[ $wetter ]]
-	then
-	    echo -e "Wetter: \t$wetter "
-	fi	
+
+    	#sicher gehen, dass überhaut ein wetter angegeben wurde
+    	if [[ $wetter ]]
+    	then
+    	    echo -e "Wetter: \t$wetter "
+    	fi	
     fi
 
 
@@ -280,10 +279,10 @@
     fi  
 
 
-# Jeglichen output in eine Datei pipen
+# Jeglichen output in eine Datei pipen (Fehler ausgenommen)
 } > $fileName
     
-    # Inhalt der Da
+    # Inhalt der Datei ausgeben
     cat ./$fileName
 
 # =========================================== EXIT ============================================
