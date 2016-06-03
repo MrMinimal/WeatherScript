@@ -61,10 +61,11 @@
             echo -e "$0 -c London -a"
     		echo -e "\n-c Muss angegeben werden und erwartet einen Städtenamen als übergabeparameter"
     		echo -e "-h gibt die Hilfe aus"	
-    		echo -e "-a gibt all Werte aus"
+    		echo -e "-a gibt alle Werte aus"
     		echo -e "-t gibt nur die Temperaturdaten aus"
     		echo -e "-w gibt die Winddaten (Windrichtung / Windgeschwindichkeit) aus"
     		echo -e "-p gibt den Umgebungsdruck an"
+            echo -e "-z gibt den Wetterzustand in Sprache aus"
         fi
     }
 
@@ -87,7 +88,7 @@
 
     # Über Parameter iterieren
     while getopts ":c: :h :a :t :w :p :z" opt; do
-     case $opt in
+        case $opt in
         # Stadt
         c)
             city=$OPTARG        # wenn kein Argument folgt, wird der case :) aufgerufen
@@ -139,14 +140,14 @@
             showPress=1
             ;;
 	
-	# Zustand
-	z)
-	    zeigeWetter=1
-	    ;;
+    	# Zustand
+    	z)
+    	    zeigeWetter=1
+    	    ;;
 
         # Alle anderen Parameter
         \?)
-            echo "Fehler: Unbekannte Option: -$OPTARG \n" >&2
+            echo "Fehler: unbekante option: -$OPTARG \n" >&2
             printhelp=1
             exit 1
             ;;
@@ -156,7 +157,7 @@
             printhelp=1
             exit
             ;;
-      esac
+        esac
     done
 
     if [[ $cFlagProvided == 0 ]]
